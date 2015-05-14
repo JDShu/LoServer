@@ -10,8 +10,20 @@ import hlo.webserver.Response;
  */
 public class DefaultHandler implements RequestHandler {
     private static ImmutableMap<String, String> defaultHeaders = ImmutableMap.of();
+    private static DefaultHandler instance = null;
 
     public Response handle(Request request) {
         return new Response(404, "Not Found", defaultHeaders, "404 Not Found: " + request.getUri());
+    }
+
+    public boolean canHandle(Request request) {
+        return true;
+    }
+
+    public synchronized static DefaultHandler getDefaultHandler() {
+        if (instance == null) {
+            instance = new DefaultHandler();
+        }
+        return instance;
     }
 }

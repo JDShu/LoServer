@@ -26,7 +26,5 @@ public class LoServer
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-
     }
-
 }

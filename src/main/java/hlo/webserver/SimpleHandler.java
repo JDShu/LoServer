@@ -17,4 +17,9 @@ public class SimpleHandler implements RequestHandler {
         Map<String, String> responseHeaders = ImmutableMap.of("Content-Length", String.valueOf(content.length()), "Server", "Lo");
         return new Response(statusCode, statusMessage, responseHeaders, content);
     }
+
+    @Override
+    public boolean canHandle(Request request) {
+        return true;
+    }
 }

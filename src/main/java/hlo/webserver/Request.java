@@ -1,28 +1,25 @@
 package hlo.webserver;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class Request {
     Method method;
     String uri;
     String httpVersion;
     Map<String, String> headers;
-    String body;
+    Optional<String> body;
 
-    Request(Method method, String uri, String httpVersion, Map<String, String> headers, String body) {
-        method = method;
-        uri = uri;
-        httpVersion = httpVersion;
-        headers = headers;
-        body = body;
-    }
-
-    Request(Method method, String uri, String httpVersion, Map<String, String> headers) {
+    public Request(Method method, String uri, String httpVersion, Map<String, String> headers, String body) {
         this.method = method;
         this.uri = uri;
         this.httpVersion = httpVersion;
         this.headers = headers;
-        this.body = null;
+        this.body = Optional.ofNullable(body);
+    }
+
+    public Request(Method method, String uri, String httpVersion, Map<String, String> headers) {
+        this(method, uri, httpVersion, headers, null);
     }
 
     public Method getMethod() {
@@ -41,7 +38,19 @@ public class Request {
         return headers;
     }
 
-    public String getBody() {
+    public Optional<String> getBody() {
         return body;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(method.toString()).append(' ').append(uri).append(' ').append(httpVersion).append('\n');
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            builder.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
+        }
+        builder.append(body.orElse("")).append('\n');
+        return builder.toString();
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by hlo on 5/9/15.
@@ -12,7 +13,7 @@ public class Response {
     private final int statusCode;
     private final String statusMessage;
     private final Map<String, String> responseHeaders;
-    private final String content;
+    private final Optional<String> content;
 
     public Response(int statusCode, String statusMessage, Map<String, String> responseHeaders, String content) {
         this.statusCode = statusCode;
@@ -21,7 +22,7 @@ public class Response {
                 .putAll(responseHeaders)
                 .put("Content-Length", String.valueOf(content.length()))
                 .build();
-        this.content = content;
+        this.content = Optional.ofNullable(content);
     }
 
     public Response(Response response, Map<String, String> headers) {
@@ -42,7 +43,7 @@ public class Response {
         return responseHeaders;
     }
 
-    public String getContent() {
+    public Optional<String> getContent() {
         return content;
     }
 
@@ -60,7 +61,18 @@ public class Response {
         }
 
         out.write("\r\n");
-        out.write(getContent());
+        out.write(getContent().orElse(""));
         out.flush();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("HTTP/1.0 ").append(statusCode).append(' ').append(statusMessage).append('\n');
+        for (Map.Entry<String, String> header : responseHeaders.entrySet()) {
+            builder.append(header).append(": ").append(header.getValue()).append("\n\n");
+        }
+        builder.append(content.orElse("")).append('\n');
+        return builder.toString();
     }
 }

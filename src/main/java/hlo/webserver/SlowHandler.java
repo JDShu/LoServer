@@ -22,4 +22,9 @@ public class SlowHandler implements RequestHandler{
         Map<String, String> responseHeaders = ImmutableMap.of();
         return new Response(statusCode, statusMessage, responseHeaders, content);
     }
+
+    @Override
+    public boolean canHandle(Request request) {
+        return true;
+    }
 }
